@@ -1,0 +1,86 @@
+DDL :
+
+1. Add a new column to the agents table
+
+   ALTER TABLE AGENTS
+   ADD A_SDRES VARCHAR2(38);
+
+2. Rename the policy_name column in the policies table to policy_title:
+
+   ALTER TABLE POLICIES
+   RENAME COLUMN POLICY_NAME TO POLICY_TITLE;
+
+3. Drop the address column from the customers table
+
+   ALTER TABLE CUSTOMERS
+   DROP COLUMN ADDRESS;
+
+=======================================================
+
+DML:
+
+1. Update a policy's premium amount:
+
+   UPDATE POLICIES
+   SET PREMIUM=4563
+   WHERE POLICY_ID=102;
+
+2. Delete a specific claim:
+ 
+   DELETE FROM CLAIMS
+   WHERE CLAIM_ID=2;
+
+3. Insert a new policy assignment
+
+   INSERT INTO POLICIES VALUES(6,'GUN','ARMOR','DUE TO WARS',7899,'24-AUG-2023','24-AUG-2024');
+
+========================================================
+
+JOIN QUERIES:
+
+1. Retrieve all customers with their assigned policies and agents
+
+   SELECT *
+   FROM CUSTOMERS C,POLICYASSIGNMENTS P,POLICIES O,AGENTS A
+   WHERE C.CUSTOMER_ID=P.CUSTOMER_ID AND O.POLICY_ID=P.POLICY_ID AND
+   A.AGENT_ID=P.AGENT_ID;
+
+2. Find all claims and the associated policy details
+
+    SELECT *
+    FROM CLAIMS C,POLICIES P
+    WHERE C.POLICY_ID=P.POLICY_ID;
+
+3. List all claims along with the customer details
+
+    SELECT *
+    FROM CLAIMS C,CUSTOMERS D
+    WHERE C.CUSTOMER_ID=D.CUSTOMER_ID;
+
+4. Get the total claim amount and number of claims per policy type
+
+    SELECT P.POLICY_TYPE,COUNT(C.CLAIM_ID),SUM(C.CLAIM_AMOUNT)
+    FROM CLAIMS C,POLICIES P
+    WHERE C.POLICY_ID=P.POLICY_ID
+    GROUP BY P.POLICY_TYPE;
+
+5. Find the most recent claim for each customer
+
+     SELECT C.CUSTOMER_ID,
+  3      c.first_name AS customer_first_name,
+  4      c.last_name AS customer_last_name,
+  5      cl.claim_id,
+  6      cl.claim_date,
+  7      cl.claim_amount,
+  8      cl.approved_amount,
+  9      cl.claim_status
+ 10  FROM
+ 11      Customers c
+ 12  JOIN
+ 13      Claims cl ON c.customer_id = cl.customer_id
+ 14  WHERE
+ 15      cl.claim_date = (
+ 16          SELECT MAX(cl2.claim_date)
+ 17          FROM Claims cl2
+ 18          WHERE cl2.customer_id = c.customer_id
+ 19      );

@@ -1,0 +1,71 @@
+DDL: 
+
+1. Add a new column to the books table:
+   
+   ALTER TABLE BOOKS
+   ADD B_SID NUMBER(3);
+
+2. Rename the position column in the staff table to job_title:
+
+   ALTER TABLE STAFF
+   RENAME COLUMN POSITION TO JOB_TITLE;
+
+3. drop the email column from the members table:
+
+   ALTER TABLE MEMBERS
+   DROP COLUMN EMAIL;
+=========================================================================
+DML:
+
+1. Insert new data into the books table:
+
+  INSERT INTO BOOKS VALUES(8,'SHERLOCK HOLMES',103,1985,'THRILLER',9658741236589,5);
+
+2. Update a member's contact number:
+
+  UPDATE MEMBERS
+  SET CONTACT_NUMBER=6301941367
+  WHERE MEMBER_ID=2;
+
+3. Delete a specific loan record:
+
+  DELETE FROM LOANS
+  WHERE LOAN_ID=3;
+
+4. Insert a new loan record:
+
+  INSERT INTO LOANS VALUES(8,4,3,'23-SEP-2023','30-SEP-2023','01-OCT-2023');
+
+=========================================================================
+JOIN QUERIES:
+
+1. Retrieve all books along with their authors:
+
+   SELECT *
+   FROM BOOKS B,AUTHORS A
+   WHERE B.AUTHOR_ID=A.AUTHOR_ID;
+
+2. Find all books currently on loan along with member details:
+
+    SELECT *
+    FROM BOOKS B,LOANS L,MEMBERS M
+    WHERE B.BOOK_ID=L.BOOK_ID AND M.MEMBER_ID=L.MEMBER_ID;
+
+3. List all books borrowed by a specific member:
+
+     SELECT B.TITLE
+     FROM BOOKS B,LOANS L,MEMBERS M
+     WHERE B.BOOK_ID=L.BOOK_ID AND M.MEMBER_ID=L.MEMBER_ID AND M.MEMBER_ID=203;
+
+4. Get the total number of books and the total available copies for each
+genre:
+
+     SELECT GENRE,COUNT(BOOK_ID),SUM(AVAILABLE_COPIES)
+     FROM BOOKS
+     GROUP BY GENRE;
+
+5. Find all staff members who are librarians and their hire dates
+
+     SELECT FIRST_NAME,LAST_NAME,HIRE_DATE
+     FROM STAFF
+     WHERE JOB_TITLE='LIBRARIAN';
